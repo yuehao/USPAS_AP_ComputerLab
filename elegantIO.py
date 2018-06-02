@@ -688,9 +688,12 @@ def get_SDDS_column(SDDSfile, column_name=[], convert_to_float=True):
     return res, cnlist[get_list], cnunit[get_list, 1]
 
 
-def elegant_findtwiss(lattice, beamline_to_use=None, matched=1,
+def elegant_findtwiss(lattice, beamline_to_use=None, rootname='temp', matched=1,
                       initial_optics=[1,0,0,0,1,0,0,0],
-                      alternate_element={}, closed_orbit=1, gamma=1.0e4/0.511):
+                      alternate_element={}, closed_orbit=1, gamma0=1.0e4/0.511,
+                      twiss_columns=['s','betax','alphax','psix','etax','etaxp',
+                                        'betay','alphay','psiy','etay','etayp']
+                     ):
     '''
     :param lattice: lattice to be used
     :param beamline_to_use: use beamline
@@ -701,13 +704,13 @@ def elegant_findtwiss(lattice, beamline_to_use=None, matched=1,
     '''
     if beamline_to_use is None:
         beamline_to_use = lattice.useline
-    lattice.write('temp.lte')
-    cmd_file=elegantCommandFile('temp.ele')
+    lattice.write('{}.lte'.format(rootname))
+    cmd_file=elegantCommandFile('{}.ele'.format(rootname))
     cmd_file.addCommand('run_setup',
-                    lattice='temp.lte',
+                    lattice='{}.lte'.format(rootname),
                     use_beamline=beamline_to_use,
-                    rootname='temp',
-                    p_central=np.sqrt(np.power(gamma,2.0)-1),
+                    rootname=rootname,
+                    p_central=np.sqrt(np.power(gamma0,2.0)-1),
                     centroid='%s.cen',
                     default_order=3,
                     concat_order = 3,
@@ -739,13 +742,17 @@ def elegant_findtwiss(lattice, beamline_to_use=None, matched=1,
     cmd_file.addCommand('bunched_beam')
     cmd_file.addCommand('track')
     cmd_file.write()
-    cmdstr = 'elegant temp.ele'
+    cmdstr = 'elegant {}.ele'.format(rootname)
     with open(os.devnull, "w") as f:
         subp.call(shlex.split(cmdstr), stdout=f)
 
     twifile = sdds.SDDS(0)
-    twifile.load('temp.twi')
-    twiss_list=np.array(twifile.columnData)[[0,1,2,3,4,5,7,8,9,10,11],0,:].astype(float)
+    twifile.load('{}.twi'.format(rootname))
+    inds=[]
+    for name in twiss_columns:
+        ind=twifile.columnName.index(name)
+        inds.append(ind)
+    twiss_list=np.array(twifile.columnData)[inds,0,:].astype(float)
 
     twiss_parameter={}
     for para_name, para_value in zip(twifile.parameterName, twifile.parameterData):
@@ -754,6 +761,67 @@ def elegant_findtwiss(lattice, beamline_to_use=None, matched=1,
 
     return twiss_list, twiss_parameter
 
+def elegant_track(lattice, beamline_to_use=None, Npar=1, rootname='temp',
+                  initial_optics=[1,0,0,0,1,0,0,0], emit_x=0.0, emit_nx=0.0, emit_y=0.0, emit_ny=0.0,
+                  centroid_columns=['s','Cx','Cxp','Cy','Cyp','Cs','Cdelta','pCentral'],
+                  sigma_columns=['s','Sx','Sxp','Sy','Syp','Ss','Sdelta','ex','ecx','ey','ecy'],
+                  gamma0=1.0e4/0.511):
+    if beamline_to_use is None:
+        beamline_to_use = lattice.useline
+    lattice.write('temp.lte')
+    cmd_file=elegantCommandFile('{}.ele'.format(rootname))
+    cmd_file.addCommand('run_setup',
+                    lattice='{}.lte'.format(rootname),
+                    use_beamline=beamline_to_use,
+                    rootname=rootname,
+                    p_central=np.sqrt(np.power(gamma0,2.0)-1),
+                    centroid='%s.cen',
+                    sigma='%s.sig',
+                    default_order=3,
+                    concat_order = 3,
+                )
+    
+    cmd_file.addCommand('run_control')
+    cmd_file.addCommand('bunched_beam',
+                        n_particles_per_bunch = Npar,
+                        emit_x=emit_x,
+                        emit_nx=emit_nx,
+                        beta_x= initial_optics[0],
+                        alpha_x=initial_optics[1],
+                        eta_x = initial_optics[2],
+                        etap_x = initial_optics[3],
+                        emit_y=emit_y,
+                        emit_ny=emit_ny,
+                        beta_y=initial_optics[4],
+                        alpha_y=initial_optics[5],
+                        eta_y=initial_optics[6],
+                        etap_y=initial_optics[7],
+                       )
+    cmd_file.addCommand('track')
+    cmd_file.write()
+    cmdstr = 'elegant {}.ele'.format(rootname)
+    with open(os.devnull, "w") as f:
+        subp.call(shlex.split(cmdstr), stdout=f)
+        
+    cenfile = sdds.SDDS(0)
+    cenfile.load('{}.cen'.format(rootname))
+    
+    inds=[]
+    for name in centroid_columns:
+        ind=cenfile.columnName.index(name)
+        inds.append(ind)
+    centroid=np.array(cenfile.columnData)[inds,0,:].astype(float)
+
+    sigfile = sdds.SDDS(0)
+    sigfile.load('{}.sig'.format(rootname))
+    inds=[]
+    for name in sigma_columns:
+        ind=sigfile.columnName.index(name)
+        inds.append(ind)
+    sigma=np.array(sigfile.columnData)[inds,0,:].astype(float)
+
+
+    return centroid,sigma
 
 
 
