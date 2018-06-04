@@ -695,12 +695,19 @@ def elegant_findtwiss(lattice, beamline_to_use=None, rootname='temp', matched=1,
                                         'betay','alphay','psiy','etay','etayp']
                      ):
     '''
-    :param lattice: lattice to be used
-    :param beamline_to_use: use beamline
-    :param matched: find repeat solution
-    :param initial_optics: [bx,ax,dx,dxp,by,ay,dy,dyp]
-    :param alternate_element: {NAME:name, PARAM:param, VALUE: value}
-    :param closed_orbit
+    Find twiss parameter using elegant
+    :param lattice: The elegantLatticeFile object to be used
+    :param beamline_to_use: The beamline to be used.  Default is None, then lattice.useline is used
+    :param rootname: The rootname of the output file.  Default is 'temp'.
+    :param matched: 1: seek for matched solution, 0: Use initial_optics as initial condition
+    :param initial_optics: Initial optics to start with, default is [1, 0, 0, 0, 1, 0, 0, 0]
+    :param alternate_element: No use for now
+    :param closed_orbit:  No use for now
+    :param gamma0: The reference lorentz factor of the particle
+    :param twiss_columns: The output columns of the twiss parameters, 
+                          default is ['s', 'betax', 'alphax', 'psix', 'etax', 'etaxp',
+                                     'betay', 'alphay', 'psiy', 'etay', 'etayp']
+    :return: return tulip of twiss numpy array and dictionary of parameters:(twiss array, twiss parameters)
     '''
     if beamline_to_use is None:
         beamline_to_use = lattice.useline
@@ -766,6 +773,24 @@ def elegant_track(lattice, beamline_to_use=None, Npar=1, rootname='temp',
                   centroid_columns=['s','Cx','Cxp','Cy','Cyp','Cs','Cdelta','pCentral'],
                   sigma_columns=['s','Sx','Sxp','Sy','Syp','Ss','Sdelta','ex','ecx','ey','ecy'],
                   gamma0=1.0e4/0.511):
+    '''
+    :param lattice: The elegantLatticeFile object to be used
+    :param beamline_to_use: The beamline to be used.  Default is None, then lattice.useline is used
+    :param Npar: Number of particles used in tracking, default is 1
+    :param rootname: rootname: The rootname of the output file.  Default is 'temp'.
+    :param initial_optics: Initial optics to start with, default is [1, 0, 0, 0, 1, 0, 0, 0]
+    :param emit_x: Initial geometric emittance of horizontal direction
+    :param emit_nx: Initial normalized emittance of horizontal direction, ignored if emit_x is given
+    :param emit_y: Initial geometric emittance of vertical direction
+    :param emit_ny: Initial normalized emittance of vertical direction, ignored if emit_y is given
+    :param centroid_columns: The output columns of centroids
+                             Default is: ['s','Cx','Cxp','Cy','Cyp','Cs','Cdelta','pCentral']
+    :param sigma_columns: The output columns of sigmas, 
+                          Default is: ['s','Sx','Sxp','Sy','Syp','Ss','Sdelta',
+                                       'ex','ecx','ey','ecy']
+    :param gamma0: The reference lorentz factor of the particle
+    :return: return tulip of two numpy array:(centroid_array, sigma_array)
+    '''
     if beamline_to_use is None:
         beamline_to_use = lattice.useline
     lattice.write('temp.lte')

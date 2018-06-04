@@ -65,7 +65,7 @@ class LatticeFile(object):
 
     def addElement(self, _name, _eletype, **params):
         '''
-
+        Add a new element.
         :param _name: Name of the element to be added
         :param _eletype: Type of the element to be added, either checked by checkType(_eletype) or existing element name.
         :param params: A dict input on the parameterlist, The allowed parameter name checked by checkType(_eletype, param_name)
@@ -117,7 +117,7 @@ class LatticeFile(object):
 
     def getElementRootType(self, elename):
         '''
-
+        Get the type of the element even if it is derived from other files.
         :param elename: Name of the element
         :return: The root type of the element, if the type of the element is another element.
         '''
@@ -195,6 +195,13 @@ class LatticeFile(object):
         return self.getElementProperties(elename) == other_lattice.getElementProperties(other_name)
 
     def modifyElement(self, elename, increment=False, **params):
+        '''
+        Modify properties of one element
+        :param elename: The element name to be modified
+        :param increment: Flag to choose overwrite (False, default) or add to existing value (True)
+        :param params: dictionary contains the changes.
+        :return: None
+        '''
         elename = elename.upper()
         ind = self.getElementIndex(elename)
         if ind is None:
@@ -292,6 +299,7 @@ class LatticeFile(object):
     def plotBeamline(self, plt_axis, colors=('DarkOrchid', 'Maroon', 'DeepSkyBlue', 'ForestGreen'),
                      heights=(1.2, 0.8, 0.5, 0.5), s_start=0, other_components = {}):
         '''
+        Plot the beamline using shapes.
         :param plt_axis: matplotlib axis variable
         :param beamline_name: name of beamline to be plotted.
         :param colors: The color for shapes that represent cavity, dipole, Quad and solenoid
@@ -386,6 +394,12 @@ class LatticeFile(object):
             return None
 
     def appendToBeamline(self, linename, *elenames):
+        '''
+        Append elements to a line
+        :param linename: The line name to be appended. If the line does not exist, it will be created first
+        :param elenames: The list of elements to be used.
+        :return: None
+        '''
         linename = linename.upper()
 
         ind = self.getBeamlineIndex(linename)
