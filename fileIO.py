@@ -195,6 +195,13 @@ class LatticeFile(object):
         return self.getElementProperties(elename) == other_lattice.getElementProperties(other_name)
 
     def modifyElement(self, elename, increment=False, **params):
+        '''
+        Modify properties of one element
+        :param elename: The element name to be modified
+        :param increment: Flag to choose overwrite (False, default) or add to existing value (True)
+        :param params: dictionary contains the changes.
+        :return: None
+        '''
         elename = elename.upper()
         ind = self.getElementIndex(elename)
         if ind is None:
