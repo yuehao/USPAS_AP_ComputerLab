@@ -579,6 +579,17 @@ class LatticeFile(object):
             exit(-1)
 
     def loadALine(self, fromlattice, linename, reverse=False, prefix='', newname='', suffix=''):
+        '''
+        Load a line from other lattice to this lattice
+        
+        :param fromlattice: The source lattices file
+        :param linename:  The line name in the source file
+        :param reverse: If the line is first reversed than load, default is False
+        :param prefix: Add the line with new name: prefix_linename or prefix_newname
+        :param newname: Change the line to newname instead of linename
+        :param suffix: Add the line with new name: linename_suffix or newname_suffix
+        :return: the new name of this line
+        '''
         linename = linename.upper()
         if newname == '':
             newname = linename
@@ -636,7 +647,8 @@ class LatticeFile(object):
                 print("The line {} doesnot exist in the source".format(linename))
                 exit()
         elif ind_this is not None:
-                print("The line {} is already in the target".format(newname))
+                pass
+                #print("The line {} is already in the target".format(newname))
         else:
                 print("Something weird happend in loadALine when loading {}".format(linename))
                 exit()
