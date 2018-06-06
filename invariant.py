@@ -20,7 +20,11 @@ class invariant_ellipse(object):
         self.generate_test()
         self.generate_mismatched()
         self.generate_matched()
-    
+        self.t_matrix = np.array([[1./np.sqrt(self.beta), 0],[self.alpha/np.sqrt(self.beta), np.sqrt(self.beta)]])
+        self.t_matrix_inv = np.array([[np.sqrt(self.beta), 0],[-self.alpha/np.sqrt(self.beta), 1./np.sqrt(self.beta)]])
+        
+#        self.normal_transformation()
+
         self.generate_inv_ellipse()
         self.generate_effective_ellipse()
     
@@ -29,7 +33,7 @@ class invariant_ellipse(object):
                                              [-np.sqrt(self.emittance/self.gamma), 0],
                                              [0, np.sqrt(self.emittance/self.beta)],
                                              [0, -np.sqrt(self.emittance/self.beta)]])
-    
+	
     def generate_mismatched(self):
         
         self.mismatched_particles_list = self.generate(xx=self.xpxp, xxp=-self.xxp, xpxp=self.xx, n=1000)
@@ -104,6 +108,36 @@ class invariant_ellipse(object):
         plt.xlabel('x')
         plt.ylabel("x'")
         plt.show()        
+
+    def plot_test_and_normal(self):
+        
+        fig = plt.figure(figsize=(14,6))
+
+        ax1 = fig.add_subplot(121)       
+        ax1.plot(self.ellipse_x[:,0], self.ellipse_x[:,1])
+        ax1.scatter(self.test_particles_list[0,0], self.test_particles_list[0,1], color='r')
+        ax1.scatter(self.test_particles_list[1,0], self.test_particles_list[1,1], color='k')
+        ax1.scatter(self.test_particles_list[2,0], self.test_particles_list[2,1], color='g')
+        ax1.scatter(self.test_particles_list[3,0], self.test_particles_list[3,1], color='y')
+        ax1.set_xlabel('x')
+        ax1.set_ylabel("x'")
+        ax1.set_title('phase space')
+        
+        self.test_normal_list = np.zeros((4,2))
+        for i in range(len(self.test_particles_list)):
+            self.test_normal_list[i] = np.dot(self.t_matrix, self.test_particles_list[i])
+
+        ax2 = fig.add_subplot(122)
+        ax2.plot(np.cos(np.linspace(0,2*np.pi,100)), np.sin(np.linspace(0,2*np.pi,100)))
+        ax2.scatter(self.test_normal_list[0,0], self.test_normal_list[0,1], color='r')
+        ax2.scatter(self.test_normal_list[1,0], self.test_normal_list[1,1], color='k')
+        ax2.scatter(self.test_normal_list[2,0], self.test_normal_list[2,1], color='g')
+        ax2.scatter(self.test_normal_list[3,0], self.test_normal_list[3,1], color='y')
+        ax2.set_xlabel('x')
+        ax2.set_ylabel("x'")
+        ax2.set_title('normal coordinates')
+        
+        plt.show()
     
     def plot_mismatched(self):
         
