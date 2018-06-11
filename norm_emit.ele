@@ -7,7 +7,7 @@
   concat_order = "2",
   lattice = "elegant.lte",
   output = "run_setup.output.sdds",
-  p_central = "19.569507623",
+  p_central = "200.0",
   p_central_mev = "0",
   parameters = "run_setup.parameters.sdds",
   print_statistics = "1",
