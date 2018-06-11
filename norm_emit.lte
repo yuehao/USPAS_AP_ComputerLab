@@ -1,0 +1,18 @@
+
+
+"D1": DRIF,l="0.5"
+"Q1": QUAD,k1="0.5",l="0.5"
+"Q2": QUAD,k1="-0.5",l="0.5"
+"R1": RFCA,change_p0="1",l="0.5",phase="60",volt="1000000"
+"W0": WATCH,filename="W0.filename.sdds"
+"W1": WATCH,filename="W1.filename.sdds"
+"W2": WATCH,filename="W2.filename.sdds"
+"W3": WATCH,filename="W3.filename.sdds"
+"W4": WATCH,filename="W4.filename.sdds"
+"BL1": LINE=(Q1,D1,R1,D1,Q2,Q2,D1,R1,D1,Q1)
+"BL2": LINE=(BL1,BL1,BL1,BL1,BL1)
+"BL3": LINE=(BL2,BL2,BL2,BL2,BL2)
+"BL4": LINE=(W0,BL3,W1,BL3,W2,BL3,W3,BL3,W4)
+"BL5": LINE=(BL3,BL3)
+"BL6": LINE=(BL5,BL5)
+
