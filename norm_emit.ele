@@ -1,0 +1,54 @@
+
+
+&run_setup
+  semaphore_file = run_setup.semaphore,
+  always_change_p0 = "1",
+  centroid = "run_setup.centroid.sdds",
+  concat_order = "2",
+  lattice = "elegant.lte",
+  output = "run_setup.output.sdds",
+  p_central = "200.0",
+  p_central_mev = "0",
+  parameters = "run_setup.parameters.sdds",
+  print_statistics = "1",
+  sigma = "run_setup.sigma.sdds",
+  use_beamline = "BL4",
+&end
+
+&run_control
+&end
+
+&twiss_output
+  alpha_x = "0",
+  alpha_y = "0",
+  beta_x = "8.183",
+  beta_y = "2.662",
+  filename = "twiss_output.filename.sdds",
+  matched = "0",
+  output_at_each_step = "1",
+  statistics = "1",
+&end
+
+&bunched_beam
+  alpha_x = "0",
+  alpha_y = "0",
+  alpha_z = "0",
+  beta_x = "8.183",
+  beta_y = "2.662",
+  beta_z = "0",
+  distribution_cutoff[0] = 3, 3, 3,
+  distribution_type[0] = uniform-ellipse, uniform-ellipse, uniform-ellipse,
+  emit_x = "4.6e-08",
+  emit_y = "4.6e-08",
+  emit_z = "0",
+  enforce_rms_values[0] = 1, 1, 1,
+  n_particles_per_bunch = "5000",
+  one_random_bunch = "0",
+  sigma_dp = "0.001",
+  sigma_s = "0.00065",
+  symmetrize = "1",
+&end
+
+&track
+&end
+

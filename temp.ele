@@ -5,22 +5,22 @@
 	concat_order        = 3,
 	rootname            = temp,
 	centroid            = %s.cen,
-	use_beamline        = TOTAL_LINE,
+	use_beamline        = FODO,
 &end
 
 &twiss_output
-	eta_x               = 0.779957236545,
-	etap_y              = 0.0,
-	etap_x              = 3.33066907388e-16,
+	eta_x               = 0,
+	etap_y              = 0,
+	etap_x              = 0,
 	output_at_each_step = 0,
-	beta_y              = 1.70293221296,
-	beta_x              = 11.6026688443,
+	beta_y              = 1,
+	beta_x              = 1,
 	filename            = %s.twi,
-	eta_y               = 0.0,
-	matched             = 0,
+	eta_y               = 0,
+	matched             = 1,
 	radiation_integrals = 1,
-	alpha_x             = -2.77555756156e-16,
-	alpha_y             = -3.33066907388e-16,
+	alpha_x             = 0,
+	alpha_y             = 0,
 &end
 
 &run_control
